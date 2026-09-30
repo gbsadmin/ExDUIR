@@ -26,7 +26,8 @@
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ConsoleBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_EditMaterial_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_FlowGraphEdit_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_FlowGraph_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ImgPreviewListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
@@ -122,7 +123,8 @@
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
     <ClInclude Include="..\..\include\Class_ConsoleBox_ex.h" />
     <ClInclude Include="..\..\include\Class_EditMaterial_ex.h" />
-    <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
+    <ClInclude Include="..\..\include\Class_FlowGraphEdit_ex.h" />
+    <ClInclude Include="..\..\include\Class_FlowGraph_ex.h" />
     <ClInclude Include="..\..\include\Class_Grid_ex.h" />
     <ClInclude Include="..\..\include\Class_ImgPreviewListView_ex.h" />
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
@@ -268,7 +270,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)thirdparty\webview2\$(Platform)\lib;$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
@@ -276,7 +278,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)thirdparty\webview2\$(Platform)\lib;$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -367,7 +369,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>

@@ -231,9 +231,6 @@
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\thirdparty\svgrender\base64.cpp">
       <Filter>svgrender</Filter>
     </ClCompile>
@@ -292,6 +289,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Class_ScrollbarLabel_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_FlowGraph_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_FlowGraphEdit_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -503,9 +506,6 @@
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_FlowChart_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\thirdparty\svgrender\base64.h">
       <Filter>svgrender</Filter>
     </ClInclude>
@@ -572,9 +572,6 @@
     <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\thirdparty\rapidyaml\rapidyaml.hpp">
-      <Filter>rapidyaml</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Class_ImgPreviewListView_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -586,6 +583,15 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Class_ScrollbarLabel_ex.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_FlowGraph_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_FlowGraphEdit_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\rapidyaml\rapidyaml.hpp">
+      <Filter>rapidyaml</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

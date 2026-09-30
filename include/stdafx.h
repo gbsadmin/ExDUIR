@@ -16,6 +16,7 @@
 #include <richole.h>
 #include <textserv.h>
 #include <mutex>
+#include <functional>
 #include <unordered_map>
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
@@ -155,7 +156,6 @@
 #include "Class_WaveProgressBar_ex.h"
 #include "Class_LineChart_ex.h"
 #include "Class_ChatBox_ex.h"
-#include "Class_FlowChart_ex.h"
 #include "Class_FlowScrollView_ex.h"
 #include "Class_Grid_ex.h"
 #include "Class_Splitter_ex.h"
@@ -166,13 +166,15 @@
 #include "Class_EditMaterial_ex.h"
 #include "Class_ConsoleBox_ex.h"
 #include "Class_ScrollbarLabel_ex.h"
+#include "Class_FlowGraph_ex.h"
+#include "Class_FlowGraphEdit_ex.h"
 
 #ifdef WEB_VIEW2
 #include "Class_WebView_ex.h"
 #pragma comment(lib, "WebView2LoaderStatic.lib")
 #endif
 
-#ifdef VCL_PLAYER
+#ifdef VLC_PLAYER
 #include "Class_VLCPlayer_ex.h"
 #pragma comment(lib, "libvlc.lib")
 #pragma comment(lib, "libvlccore.lib")

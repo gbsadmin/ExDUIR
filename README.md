@@ -193,8 +193,8 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_chatbox4.png)
 ![image](demo_image/demo_chatbox5.png)
 ![image](demo_image/demo_chatbox6.png)
-### demo flowchart:
-![image](demo_image/demo_flowchart.png)
+### demo flowgraph:
+![image](demo_image/demo_flowgraph.png)
 ### demo splitter:
 ![image](demo_image/demo_splitter.png)
 ### demo d3d:

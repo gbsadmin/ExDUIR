@@ -2730,6 +2730,13 @@ EXHANDLE Ex_ObjGetParentEx(HEXOBJ hObj, HEXDUI* phExDUI);
 size_t Ex_ObjGetProp(HEXOBJ hObj, size_t dwKey);
 
 /// <summary>
+/// 组件取窗口句柄
+/// </summary>
+/// <param name="hObj"></param>
+/// <returns></returns>
+HWND Ex_ObjGetHWND(HEXOBJ hObj);
+
+/// <summary>
 /// 组件取矩形,同Ex_ObjGetClientRect 包括dpi缩放
 /// </summary>
 /// <param name="hObj"></param>

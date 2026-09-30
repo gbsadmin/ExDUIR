@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#ifdef VCL_PLAYER
+#ifdef VLC_PLAYER
 // ==================== 注册与消息处理 ====================
 void _vlcplayer_register() {
 	WCHAR wzCls[] = L"VLCPlayer";

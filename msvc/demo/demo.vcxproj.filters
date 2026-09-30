@@ -185,9 +185,6 @@
     <ClCompile Include="test_chatbox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_flowchart.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="test_splitter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -219,6 +216,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="test_scrollbarlabel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_flowgraph.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -408,9 +408,6 @@
     <ClInclude Include="test_chatbox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="test_flowchart.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="test_splitter.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -445,6 +442,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_scrollbarlabel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_flowgraph.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

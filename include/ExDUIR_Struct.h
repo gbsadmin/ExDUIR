@@ -9,7 +9,8 @@
 #include <vector>
 #pragma region 编译配置
 // 启用VLC播放引擎
-//#define VCL_PLAYER
+#define VLC_PLAYER
+#include "vlc/vlc.h"
 // 启用webview2浏览器编译
 //#define WEB_VIEW2
 #pragma endregion 编译配置
@@ -2874,8 +2875,6 @@ struct EX_CHATBOX_MD_TABLE_CELL {
 #pragma pack()
 
 
-
-
 // 块级元素
 #pragma pack(4)
 struct EX_CHATBOX_MD_ELEMENT
@@ -2987,175 +2986,6 @@ struct EX_CHATBOX_ITEMINFO
 #pragma endregion chatbox message constant
 
 
-// 流程图_端口类型_输入
-#define FLOWCHART_PORTTYPE_INPUT        0
-// 流程图_端口类型_输出
-#define FLOWCHART_PORTTYPE_OUTPUT       1
-// 流程图_端口类型_既不是输入也不是输出，仅作中间数据展示
-#define FLOWCHART_PORTTYPE_INTERMEDIATE 2 
-
-// 流程图_消息_添加节点, lParam: EX_FLOWCHART_NODE指针
-#define FLOWCHART_MESSAGE_ADD_NODE          0x8001
-// 流程图_消息_移除节点,wParam: 节点ID
-#define FLOWCHART_MESSAGE_REMOVE_NODE       0x8002
-// 流程图_消息_添加连接线, lParam: EX_FLOWCHART_CONNECTION指针
-#define FLOWCHART_MESSAGE_ADD_CONNECTION    0x8003
-// 流程图_消息_移除连接线, wParam: 连接线ID EX_FLOWCHART_CONNECTION结构体id
-#define FLOWCHART_MESSAGE_REMOVE_CONNECTION 0x8004
-// 流程图_消息_更新节点数据, wParam: 节点ID, lParam: EX_FLOWCHART_PORT指针
-#define FLOWCHART_MESSAGE_UPDATE_NODEDATA   0x8005
-// 流程图_消息_执行节点, wParam: 节点ID
-#define FLOWCHART_MESSAGE_EXECUTE_NODE   0x8006
-// 流程图_消息_导出节点到YAML文件,  lParam: yaml文件保存绝对路径 LPCWSTR
-#define FLOWCHART_MESSAGE_EXPORT_YAML    0x8007
-// 流程图_消息_从YAML文件导入数据,  lParam: yaml文件绝对路径 LPCWSTR
-#define FLOWCHART_MESSAGE_IMPORT_YAML    0x8008
-// 流程图_消息_置背景色 , lParam:ExARGB颜色
-#define FLOWCHART_MESSAGE_SET_BACKGROUNDCOLOR 0x8009
-
-// 流程图_节点数据类型_编辑框
-#define FLOWCHART_NODEDATA_TYPE_EDIT   1
-// 流程图_节点数据类型_组合框
-#define FLOWCHART_NODEDATA_TYPE_COMBO  2
-// 流程图_节点数据类型_图片框
-#define FLOWCHART_NODEDATA_TYPE_IMAGE  3
-
-// ================= 数据类型定义 =================
-// 流程图_绑定的子组件数据类型_任何
-#define FLOWCHART_DATATYPE_ANY      0
-// 流程图_绑定的子组件数据类型_图片
-#define FLOWCHART_DATATYPE_IMAGE    1
-// 流程图_绑定的子组件数据类型_文本
-#define FLOWCHART_DATATYPE_STRING   2
-// 流程图_绑定的子组件数据类型_组合框
-#define FLOWCHART_DATATYPE_COMBO    3
-
-// 流程图_事件_选中节点, wParam:节点ID
-#define FLOWCHART_EVENT_NODE_CLICKED         10001
-// 流程图_事件_节点移动, wParam:节点ID
-#define FLOWCHART_EVENT_NODE_MOVED           10002
-// 流程图_事件_连接线增加, wParam:连接线ID
-#define FLOWCHART_EVENT_CONNECTION_CREATED   10004
-// 流程图_事件_连接线移除, wParam:连接线ID
-#define FLOWCHART_EVENT_CONNECTION_REMOVED   10005
-// 流程图_事件_连接线选中, wParam:连接线ID
-#define FLOWCHART_EVENT_CONNECTION_SELECTED  10006
-// 流程图_事件_连接线拖动, wParam:连接线ID
-#define FLOWCHART_EVENT_CONNECTION_MOVED     10007
-// 流程图_事件_组合框选项改变, wParam:节点ID, lParam:EX_FLOWCHART_PORT指针
-#define FLOWCHART_EVENT_NODEDATA_COMBO_CHANGED     10008
-// 流程图_事件_执行节点, wParam:节点ID, lParam:EX_FLOWCHART_EXECUTE_PARAMS指针
-#define FLOWCHART_EVENT_EXECUTE_NODE         10009
-
-// ================= 数据结构重构 =================
-// 节点IO数据结构
-struct EX_FLOWCHART_NODE_IO_DATA {
-	INT portId;
-	INT dataType;
-	LPVOID data;    // 外部需根据dataType管理内存
-};
-
-// 节点执行参数
-#pragma pack(4)
-struct EX_FLOWCHART_EXECUTE_PARAMS {
-	INT nodeId;
-	INT inputCount;
-	EX_FLOWCHART_NODE_IO_DATA* inputs;
-	INT outputCount;
-	EX_FLOWCHART_NODE_IO_DATA* outputs; // 外部回调需填充此数组
-};
-#pragma pack()
-
-#pragma pack(4)
-struct EX_FLOWCHART_NODE_COMBO_DATA
-{
-	LPCWSTR* options;   // 选项数组
-	INT count;          // 选项数量
-	INT current;        // 当前选中的索引
-};
-#pragma pack()
-
-#pragma pack(4)
-struct EX_FLOWCHART_PORT
-{
-	INT id;                 // 端口ID
-	INT portType;       // 端口类型, FLOWCHART_PORTTYPE_常量,0=输入, 1=输出, 2=既不是输入也不是输出，仅作中间数据展示
-	INT dataType;           // 数据类型 (用于连接限制)FLOWCHART_DATATYPE_常量
-	LPCWSTR name;           // 端口名称
-	RECT portRect;          // 端口圆点的位置
-
-	// 绑定的子组件属性 (仅输入端口和中间端口有效)
-	INT widgetType;         // FLOWCHART_NODEDATA_TYPE_常量, 0表示无组件
-	INT widgetId;           // 组件ID
-	FLOAT widgetWidth;  // 组件显式宽度
-	FLOAT widgetHeight; // 组件显式高度
-	RECT widgetRect;        // 组件的区域
-	LPVOID widgetData;      // 组件的数据 (如编辑框文本、COMBO结构)
-	BOOL isConnected;       // 当前端口是否已连接 (连接后隐藏子组件)
-};
-#pragma pack()
-
-#pragma pack(4)
-struct EX_FLOWCHART_NODE
-{
-	INT id;
-	FLOAT x;
-	FLOAT y;
-	FLOAT width;
-	FLOAT height;
-	LPCWSTR title;
-
-	EX_FLOWCHART_PORT* ports;   // 统一的端口数组
-	INT portCount;              // 端口数量
-};
-#pragma pack()
-
-#pragma pack(4)
-struct EX_FLOWCHART_CONNECTION
-{
-	INT id;             // 连接线唯一ID
-	INT fromNode;       // 源节点ID
-	INT fromSlot;       // 源端口索引, EX_FLOWCHART_NODE结构体ports参数端口索引，注意输入端口和输出端口共用ports
-	INT toNode;         // 目标节点ID
-	INT toSlot;         // 目标端口索引
-	POINTF controlPoint1; // 内部使用
-	POINTF controlPoint2; // 内部使用
-};
-#pragma pack()
-
-#pragma pack(4)
-struct EX_FLOWCHART_DATA
-{
-	FLOAT zoom;
-	POINTF panOffset;
-	INT selectedNode;
-	INT draggingNode;
-	POINTF dragStartPos;
-	INT connectingSlot;
-	INT connectingNode;
-	INT connectingSlotType;
-	INT hoverNode;
-	INT hoverSlot;
-	INT hoverSlotType;
-	EX_FLOWCHART_NODE* nodes;
-	INT nodeCount;
-	EX_FLOWCHART_CONNECTION* connections;
-	INT connectionCount;
-	INT selectedConnection;
-	BOOL draggingControlPoint;
-	INT draggingWhichPoint;
-
-	// 选中的插槽
-	INT selectedPortNode;
-	INT selectedPortIndex;
-	INT executionDepth; // 执行深度，防止死循环 内部使用
-
-	//  组件大小调整状态
-	INT resizingNode; // 内部使用
-	INT resizingPortIdx; // 内部使用
-};
-#pragma pack()
-
 // 流式滚动容器布局配置结构
 struct EX_FLOWSCROLLVIEW_LAYOUT_CONFIG {
 	INT nHorizontalSpacing; // 水平间距
@@ -3234,6 +3064,363 @@ struct EX_EDITMATERIAL_ITEM {
 #define CONSOLEBOX_MESSAGE_SETFONT   (WM_USER + 2004) 
 // 日志框_消息_设置背景颜色 wParam:ARGB颜色值
 #define CONSOLEBOX_MESSAGE_SETBACKCOLOR (WM_USER + 2005) 
+
+// ================= 卡片类型定义 =================
+// 节点图_卡片类型_本地文本
+#define FLOWGRAPH_CARD_TYPE_LOCAL_TEXT      1
+// 节点图_卡片类型_大模型文本
+#define FLOWGRAPH_CARD_TYPE_LLM_TEXT        2
+// 节点图_卡片类型_文生图
+#define FLOWGRAPH_CARD_TYPE_TEXT_TO_IMAGE   3
+// 节点图_卡片类型_本地图
+#define FLOWGRAPH_CARD_TYPE_LOCAL_IMAGE     4
+// 节点图_卡片类型_参考生图
+#define FLOWGRAPH_CARD_TYPE_REF_IMAGE       5
+// 节点图_卡片类型_文本显示
+#define FLOWGRAPH_CARD_TYPE_TEXT_RENDER      6
+// 节点图_卡片类型_文生视频
+#define FLOWGRAPH_CARD_TYPE_TEXT_TO_VIDEO       7
+// 节点图_卡片类型_参考图生视频
+#define FLOWGRAPH_CARD_TYPE_REF_IMAGE_TO_VIDEO  8
+// 节点图_卡片类型_本地音频
+#define FLOWGRAPH_CARD_TYPE_LOCAL_AUDIO 9
+
+
+// ================= 子组件类型 =================
+// 节点图_子组件类型_编辑框
+#define FLOWGRAPH_NODEDATA_TYPE_EDIT   1
+// 节点图_子组件类型_组合框
+#define FLOWGRAPH_NODEDATA_TYPE_COMBO  2
+// 节点图_子组件类型_图片
+#define FLOWGRAPH_NODEDATA_TYPE_IMAGE  3
+// 节点图_子组件类型_按钮
+#define FLOWGRAPH_NODEDATA_TYPE_BUTTON 4
+// 节点图_子组件类型_只读文本
+#define FLOWGRAPH_NODEDATA_TYPE_TEXT   5
+// 节点图_子组件类型_双按钮(左右并排)
+#define FLOWGRAPH_NODEDATA_TYPE_DUAL_BUTTON 6
+	// 节点图_子组件类型_视频
+#define FLOWGRAPH_NODEDATA_TYPE_VIDEO  7
+
+
+// ================= 消息 =================
+// 节点图_消息_添加节点 wParam=0, lParam=EX_FLOWGRAPH_NODE*
+#define FLOWGRAPH_MESSAGE_ADD_NODE              0x8001
+// 节点图_消息_删除节点 wParam=nodeId, lParam=0
+#define FLOWGRAPH_MESSAGE_REMOVE_NODE           0x8002
+// 节点图_消息_添加连线 wParam=0, lParam=EX_FLOWGRAPH_CONNECTION*
+#define FLOWGRAPH_MESSAGE_ADD_CONNECTION        0x8003
+// 节点图_消息_删除连线 wParam=connId, lParam=0
+#define FLOWGRAPH_MESSAGE_REMOVE_CONNECTION     0x8004
+// 节点图_消息_更新节点数据 wParam=nodeId, lParam=EX_FLOWGRAPH_PORT*
+#define FLOWGRAPH_MESSAGE_UPDATE_NODEDATA       0x8005
+// 节点图_消息_单节点执行 wParam=executeMode, lParam=nodeId
+#define FLOWGRAPH_MESSAGE_EXECUTE_NODE          0x8006
+// 节点图_消息_链式执行 wParam=executeMode, lParam=nodeId
+#define FLOWGRAPH_MESSAGE_EXECUTE_CHAIN         0x8007
+// 节点图_消息_执行所有链路 wParam=executeMode, lParam=0
+#define FLOWGRAPH_MESSAGE_EXECUTE_ALL          0x8008
+// 节点图_消息_导出YAML wParam=0, lParam=LPCWSTR filePath
+#define FLOWGRAPH_MESSAGE_EXPORT_YAML           0x8009
+// 节点图_消息_导入YAML wParam=0, lParam=LPCWSTR filePath
+#define FLOWGRAPH_MESSAGE_IMPORT_YAML           0x800A
+// 节点图_消息_设置背景色 wParam=0, lParam=EXARGB color
+#define FLOWGRAPH_MESSAGE_SET_BACKGROUNDCOLOR   0x800B
+// 节点图_消息_查找节点 wParam=0, lParam=nodeId, 返回EX_FLOWGRAPH_NODE*
+#define FLOWGRAPH_MESSAGE_FIND_NODE    0x800C
+// 节点图_消息_标记异步节点 wParam=nodeId, lParam=0
+#define FLOWGRAPH_MESSAGE_MARK_ASYNC_NODE          0x800D
+// 节点图_消息_异步执行完成 wParam=0, lParam=EX_FLOWGRAPH_ASYNC_RESULT*
+#define FLOWGRAPH_MESSAGE_NODE_EXECUTION_COMPLETE   0x800E
+// 节点图_消息_设置自定义条目 wParam=0, lParam=EX_FLOWGRAPH_CUSTOM_ITEMS*
+#define FLOWGRAPH_MESSAGE_SET_CUSTOM_ITEMS 0x800F
+// 节点图_消息_注册卡片类型 wParam=0, lParam=EX_FLOWGRAPH_CARD_DESCRIPTOR*
+#define FLOWGRAPH_MESSAGE_REGISTER_CARD_TYPE    0x8010
+// 节点图_消息_创建自定义节点 wParam=0, lParam=EX_FLOWGRAPH_CUSTOM_NODE_CREATE*
+#define FLOWGRAPH_MESSAGE_CREATE_CUSTOM_NODE    0x8011
+// 节点图_消息_注销卡片类型 wParam=cardType, lParam=0
+#define FLOWGRAPH_MESSAGE_UNREGISTER_CARD_TYPE  0x8012
+// 节点图_消息_增第二组动态端口
+#define FLOWGRAPH_MESSAGE_ADD_DYNAMIC_PORT2    0x8013
+// 节点图_消息_减第二组动态端口
+#define FLOWGRAPH_MESSAGE_REMOVE_DYNAMIC_PORT2 0x8014
+#define FLOWGRAPH_MESSAGE_VIDEO_REFRESH 0x8020
+
+// ================= 自动定位标记 =================
+#define FLOWGRAPH_AUTO_POSITION  -1.0f
+
+// ================= 事件 =================
+// 节点图_事件_节点被点击 wParam=nodeId, lParam=0
+#define FLOWGRAPH_EVENT_NODE_CLICKED             10001
+// 节点图_事件_节点被移动 wParam=nodeId, lParam=0
+#define FLOWGRAPH_EVENT_NODE_MOVED               10002
+// 节点图_事件_连线已创建 wParam=connId, lParam=0
+#define FLOWGRAPH_EVENT_CONNECTION_CREATED       10003
+// 节点图_事件_连线已删除 wParam=connId, lParam=0
+#define FLOWGRAPH_EVENT_CONNECTION_REMOVED       10004
+// 节点图_事件_连线被选中 wParam=connId, lParam=0
+#define FLOWGRAPH_EVENT_CONNECTION_SELECTED      10005
+// 节点图_事件_连线被移动 wParam=connId, lParam=0
+#define FLOWGRAPH_EVENT_CONNECTION_MOVED         10006
+// 节点图_事件_组合框选项改变 wParam=nodeId, lParam=EX_FLOWGRAPH_PORT*
+#define FLOWGRAPH_EVENT_NODEDATA_COMBO_CHANGED   10007
+// 节点图_事件_通用执行事件 wParam=nodeId, lParam=EX_FLOWGRAPH_EXECUTE_PARAMS*
+#define FLOWGRAPH_EVENT_EXECUTE_NODE             10008
+// 节点图_事件_按钮被点击 wParam=nodeId, lParam=EX_FLOWGRAPH_BUTTON_CLICK_INFO*
+#define FLOWGRAPH_EVENT_BUTTON_CLICKED           10009
+// 节点图_事件_侧边栏添加卡片 wParam=cardType(FLOWGRAPH_CARD_TYPE_), lParam=0
+#define FLOWGRAPH_EVENT_SIDEBAR_ADD_CARD 10010
+// 节点图_事件_自定义条目被点击 wParam=itemIndex, lParam=LPCWSTR itemName
+#define FLOWGRAPH_EVENT_CUSTOM_ITEM_CLICKED 10011
+// 节点图_事件_节点执行被取消 wParam=nodeId, lParam=cardType
+#define FLOWGRAPH_EVENT_NODE_CANCELED            10012
+// 节点图_事件_导入yaml lParam:文件名
+#define FLOWGRAPH_EVENT_IMPORT_YAML              10013
+// 节点图_事件_导出yaml lParam:文件名
+#define FLOWGRAPH_EVENT_EXPORT_YAML              10014
+
+// ==================== 执行结果 ====================
+// 节点图_执行结果_成功
+#define FLOWGRAPH_EXEC_RESULT_SUCCESS  0
+// 节点图_执行结果_失败(中断链路)
+#define FLOWGRAPH_EXEC_RESULT_FAILED   -1
+
+// ================= 参考生图固定端口数(参考图输入端口之前的端口数) =================
+#define FLOWGRAPH_REF_IMAGE_FIXED_PORTS  7
+
+
+// ================= 数据类型 =================
+// 节点图_数据类型_任意
+#define FLOWGRAPH_DATATYPE_ANY      0
+// 节点图_数据类型_图片
+#define FLOWGRAPH_DATATYPE_IMAGE    1
+// 节点图_数据类型_文本
+#define FLOWGRAPH_DATATYPE_STRING   2
+// 节点图_数据类型_组合框
+#define FLOWGRAPH_DATATYPE_COMBO    3
+// 节点图_数据类型_视频
+#define FLOWGRAPH_DATATYPE_VIDEO  4
+// 节点图_数据类型_音频
+#define FLOWGRAPH_DATATYPE_AUDIO  5
+
+// ================= 端口类型 =================
+// 节点图_端口类型_输入
+#define FLOWGRAPH_PORTTYPE_INPUT        0
+// 节点图_端口类型_输出
+#define FLOWGRAPH_PORTTYPE_OUTPUT       1
+// 节点图_端口类型_中间(仅UI展示)
+#define FLOWGRAPH_PORTTYPE_INTERMEDIATE 2
+
+// ================= 子组件ID标识 =================
+// 节点图_子组件ID_参考图增减控制
+#define FLOWGRAPH_WIDGET_ID_REF_CONTROL  1
+// 节点图_子组件ID_参考音频增减控制
+#define FLOWGRAPH_WIDGET_ID_REF_AUDIO_CONTROL 2
+
+// ================= 结构体定义 =================
+	// ================= 端口描述符(用于卡片类型模板) =================
+#pragma pack(4)
+struct EX_FLOWGRAPH_PORT_DESC {
+	INT portType;           // FLOWGRAPH_PORTTYPE_
+	INT dataType;           // FLOWGRAPH_DATATYPE_
+	LPCWSTR name;           // 端口名称
+	INT widgetType;         // FLOWGRAPH_NODEDATA_TYPE_ (0=无组件)
+	INT widgetId;           // 子组件ID标识
+	FLOAT widgetWidth;      // 默认组件宽度
+	FLOAT widgetHeight;     // 默认组件高度
+	LPVOID defaultWidgetData; // 默认组件数据(EDIT/TEXT=LPCWSTR, COMBO=EX_FLOWGRAPH_NODE_COMBO_DATA*, BUTTON=EX_FLOWGRAPH_NODE_BUTTON_DATA*, DUAL_BUTTON=EX_FLOWGRAPH_NODE_DUAL_BUTTON_DATA*, IMAGE/VIDEO=NULL)
+};
+#pragma pack()
+
+// ================= 卡片类型描述符 =================
+#pragma pack(4)
+struct EX_FLOWGRAPH_CARD_DESCRIPTOR {
+	INT cardType;                     // 卡片类型ID (>= 0)
+	LPCWSTR typeName;                 // 类型显示名称
+	EXARGB tagColor;                  // 标题栏标签颜色
+	INT portCount;                    // 端口数量
+	EX_FLOWGRAPH_PORT_DESC* ports;    // 端口布局模板
+	// ★ 新增：动态端口配置（-1表示不支持增减）
+	INT dynamicPortBaseIndex;     // 动态端口插入的起始索引位置
+	INT dynamicPortMinCount;       // 动态端口最少数量
+	INT dynamicPortMaxCount;       // 动态端口最多数量
+	INT dynamicPortDataType;       // 动态端口的数据类型
+	LPCWSTR dynamicPortNamePrefix; // 动态端口名称前缀 (如 L"参考图片")
+
+	INT dynamicPort2BaseIndex;     // 相对第一组末尾的偏移(通常填0)
+	INT dynamicPort2MinCount;
+	INT dynamicPort2MaxCount;
+	INT dynamicPort2DataType;
+	LPCWSTR dynamicPort2NamePrefix;
+};
+#pragma pack()
+
+// ================= 创建自定义节点参数 =================
+#pragma pack(4)
+struct EX_FLOWGRAPH_CUSTOM_NODE_CREATE {
+	FLOAT x, y;             // 坐标 (FLOWGRAPH_AUTO_POSITION则居中)
+	LPCWSTR title;          // 标题
+	INT cardType;           // 已注册的卡片类型ID
+};
+#pragma pack()
+
+// ================= 新增结构体 =================
+#pragma pack(4)
+struct EX_FLOWGRAPH_CUSTOM_ITEMS {
+	INT count;              // 条目数量
+	LPCWSTR* items;         // 条目名称数组
+};
+#pragma pack()
+
+// ==================== 通用节点I/O数据 ====================
+struct EX_FLOWGRAPH_NODE_IO_DATA {
+	INT portId;             // 端口ID
+	INT dataType;           // 数据类型 (FLOWGRAPH_DATATYPE_)
+	LPVOID data;            // 数据指针
+};
+
+// ==================== 异步完成结果 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_ASYNC_RESULT {
+	INT nodeId;             // 完成的节点ID
+	INT cardType;           // 卡片类型 (FLOWGRAPH_CARD_TYPE_)
+	INT executionResult;    // [输出] 执行结果 (FLOWGRAPH_EXEC_RESULT_)
+	// ===== 智能自动映射 (当 outputCount == 0 时生效) =====
+	LPCWSTR outputText;     // [输出] 自动映射到第一个OUTPUT/STRING端口，若含VIDEO控件则自动加载
+	HEXIMAGE outputImage;   // [输出] 自动映射到第一个OUTPUT/IMAGE端口，并自动复制到INTERMEDIATE/IMAGE预览端口
+	// ===== 显式端口映射 (当 outputCount > 0 时生效，忽略上面的自动映射) =====
+	INT outputCount;        // 显式输出的数量
+	EX_FLOWGRAPH_NODE_IO_DATA* outputs; // 显式输出数组 (可精确更新任意端口，包括INTERMEDIATE)
+};
+#pragma pack()
+
+// ==================== 组合框数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_NODE_COMBO_DATA {
+	LPCWSTR* options;       // 选项字符串数组
+	INT count;              // 选项数量
+	INT current;            // 当前选中索引
+};
+#pragma pack()
+
+// ==================== 按钮数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_NODE_BUTTON_DATA {
+	LPCWSTR caption;        // 按钮文本
+};
+#pragma pack()
+
+// ==================== 双按钮数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_NODE_DUAL_BUTTON_DATA {
+	LPCWSTR caption1;       // 左按钮文本
+	LPCWSTR caption2;       // 右按钮文本
+};
+#pragma pack()
+
+// ==================== 视频控件数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_NODE_VIDEO_DATA {
+	libvlc_instance_t* libVlc;          // 共享VLC实例(不拥有)
+	libvlc_media_player_t* mediaPlayer; // 当前视频的播放器
+	CRITICAL_SECTION critsec;           // 线程安全
+	void* pixelBuff;                    // VLC像素缓冲区
+	UINT32 videoWidth;                  // 视频宽度
+	UINT32 videoHeight;                 // 视频高度
+	HEXIMAGE hCoverImg;                 // 封面图(首帧)
+	HEXIMAGE hCurrentFrame;             // 当前视频帧
+	HEXIMAGE hPendingFree;              // 待销毁帧
+	BOOL bHasCover;                     // 是否有封面
+	BOOL bIsPlaying;                    // 正在播放
+	BOOL bIsPaused;                     // 已暂停
+	BOOL bIsLoaded;                     // 已加载媒体
+	BOOL bLoadOnly;                     // 仅加载(获取封面后暂停)
+	INT64 nDuration;                    // 总时长(ms)
+	INT64 nCurrentTime;                 // 当前播放时间(ms)
+	INT nVolume;                        // 音量(0-100)
+	BOOL bHoverPlay;                    // 悬停在播放按钮
+	BOOL bHoverProgress;                // 悬停在进度条
+	BOOL bDraggingProgress;             // 拖拽进度条中
+	HEXOBJ hFlowGraphObj;               // 父画布对象句柄
+	LPCWSTR videoPath;                  // 视频本地路径
+};
+#pragma pack()
+
+// ==================== 端口/子组件数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_PORT {
+	INT id;                 // 端口ID(系统自动生成)
+	INT portType;           // 端口类型 (FLOWGRAPH_PORTTYPE_)
+	INT dataType;           // 数据类型 (FLOWGRAPH_DATATYPE_)
+	LPCWSTR name;           // 端口名称
+	RECT portRect;          // 端口圆点区域(相对节点)
+	INT widgetType;         // 子组件类型 (FLOWGRAPH_NODEDATA_TYPE_)
+	INT widgetId;           // 子组件ID
+	FLOAT widgetWidth;      // 子组件宽度
+	FLOAT widgetHeight;     // 子组件高度
+	RECT widgetRect;        // 子组件区域(相对节点)
+	LPVOID widgetData;      // 子组件数据(字符串指针/图片句柄/COMBO/BUTTON结构体指针)
+	BOOL isConnected;       // 是否已连接(仅输入端口有效)
+	LPCWSTR imagePath;      // 图片本地路径(用于本地图节点导出/导入)
+};
+#pragma pack()
+
+// ==================== 节点数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_NODE {
+	INT id;                 // 节点ID(系统自动生成)
+	INT cardType;           // 卡片类型 (FLOWGRAPH_CARD_TYPE_)
+	FLOAT x;                // X坐标
+	FLOAT y;                // Y坐标
+	FLOAT width;            // 宽度
+	FLOAT height;           // 高度
+	LPCWSTR title;          // 标题
+	EX_FLOWGRAPH_PORT* ports; // 端口数组
+	INT portCount;          // 端口数量
+	INT lastExecutedPass;   // 上次执行的趟次(内部使用)
+	INT executionStatus;    // 执行状态 (FLOWGRAPH_EXEC_STATUS_)
+	INT dynamicPortCount;  // ★ 新增：当前节点拥有的动态端口数量
+	INT dynamicPortCount2;  // ★ 新增：第二组动态端口数量
+};
+#pragma pack()
+
+// ==================== 连线数据 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_CONNECTION {
+	INT id;                 // 连线ID
+	INT fromNode;           // 起始节点ID
+	INT fromSlot;           // 起始端口索引
+	INT toNode;             // 目标节点ID
+	INT toSlot;             // 目标端口索引
+	POINTF controlPoint1;   // 贝塞尔控制点1
+	POINTF controlPoint2;   // 贝塞尔控制点2
+};
+#pragma pack()
+
+
+// ==================== 通用执行参数(保留兼容) ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_EXECUTE_PARAMS {
+	INT nodeId;             // 节点ID
+	INT cardType;           // ★ 新增：卡片类型，方便外部识别
+	INT inputCount;         // 输入数量
+	EX_FLOWGRAPH_NODE_IO_DATA* inputs; // 输入数组
+	INT outputCount;        // 输出数量
+	EX_FLOWGRAPH_NODE_IO_DATA* outputs; // 输出数组
+	INT executionResult;    // [输出] 执行结果 (FLOWGRAPH_EXEC_RESULT_)
+};
+#pragma pack()
+
+
+// ==================== 按钮点击事件参数 ====================
+#pragma pack(4)
+struct EX_FLOWGRAPH_BUTTON_CLICK_INFO {
+	INT nodeId;             // 节点ID
+	INT cardType;           // 卡片类型 (FLOWGRAPH_CARD_TYPE_)
+	INT portIndex;          // 按钮所在的端口索引
+	INT portId;             // 按钮所在的端口ID
+};
+#pragma pack()
 
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
 	_In_reads_(dataSize) const BYTE* data,

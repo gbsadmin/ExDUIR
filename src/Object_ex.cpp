@@ -44,7 +44,6 @@ void _object_init()
     _waveprogressbar_register();
     _linechart_register();
     _chatbox_register();
-    _flowchart_register();
     _grid_register();
     _flowscrollview_register();
     _splitter_register();
@@ -54,11 +53,13 @@ void _object_init()
     _editmaterial_register();
     _consolebox_register();
     _scrollbarlabel_register();
+    _flowgraph_register();
+    _flowgraphedit_register();
 
 #ifdef WEB_VIEW2
     _webview_register();
 #endif
-#ifdef VCL_PLAYER
+#ifdef VLC_PLAYER
     _vlcplayer_register();
 #endif
     
@@ -4650,4 +4651,15 @@ BOOL Ex_ObjScreenToClient(HEXOBJ hObj, INT* x, INT* y)
     }
     Ex_SetLastError(nError);
     return nError == 0;
+}
+
+HWND Ex_ObjGetHWND(HEXOBJ hObj)
+{
+    obj_s* pObj = nullptr;
+    HWND      hWnd = 0;
+    wnd_s* pWnd = nullptr;
+    if (_wnd_getfromhandle(hObj, &hWnd, &pWnd, &pObj)) {
+        return hWnd;
+    }
+    return hWnd;
 }

@@ -71,7 +71,6 @@
 #include "test_waveprogressbar.h"
 #include "test_linechart.h"
 #include "test_chatbox.h"
-#include "test_flowchart.h"
 #include "test_splitter.h"
 #include "test_d3d.h"
 #include "test_grid.h"
@@ -83,6 +82,7 @@
 #include "test_edit_material.h"
 #include "test_consolebox.h"
 #include "test_scrollbarlabel.h"
+#include "test_flowgraph.h"
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult);
